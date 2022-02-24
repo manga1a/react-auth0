@@ -14,11 +14,20 @@ import AuthContext from "./AuthContext";
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = { auth: new Auth(props.history) };
+    this.state = { auth: new Auth(props.history), tokenRenewalComplete: false };
+  }
+
+  componentDidMount() {
+    this.state.auth.renewToken(() =>
+      this.setState({ tokenRenewalComplete: true })
+    );
   }
 
   render() {
-    const { auth } = this.state;
+    const { auth, tokenRenewalComplete } = this.state;
+    if (!tokenRenewalComplete) {
+      return "Loading...";
+    }
     return (
       <AuthContext.Provider value={auth}>
         <Nav auth={auth} />
